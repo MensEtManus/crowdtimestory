@@ -1,24 +1,12 @@
-<!DOCTYPE html>
-<html>
+{% extends "index.html" %}
 
-<head>
-
-  <meta charset="UTF-8">
-
-  <title>Crowd-Time Story</title>
-
-  <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css'>
-<link rel='stylesheet prefetch' href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,700'>
+{% block stylesheets %}
 <link rel="stylesheet" href="../static/css/style.css">
-<link rel='stylesheet prefetch' href='http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css'>
+{% endblock %}
 
-    
+{% block content %}
 
-</head>
-
-<body>
-
-  <div class="wrapper">
+<div class="wrapper">
   <header role="header">
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
       <div class="container">
@@ -174,8 +162,8 @@
   </footer>
 </div>
 
-  <script src="js/index.js"></script>
-  <script type="text/javascript">
+<script src="js/index.js"></script>
+<script type="text/javascript">
     function bigImg(x) {
         x.style.height = "310px";
         x.style.width = "260px";
@@ -185,42 +173,6 @@
         x.style.height = "300px";
         x.style.width = "250px";
     }
-  </script>
-</body>
+</script>
 
-</html>
-
-<!-- footer extra effects  -->
-<!-- 
-
-        <div class="row">
-          <div class="three columns">
-            <p class="copyright">COPYRIGHT 2014 MEXTURES</p>
-          </div>
-          <div class="push_one eight columns">
-            <ul class="icons pull_right">
-              <li><a href="https://www.facebook.com/Mextures"><i class="icon-facebook-squared"></i></a></li>
-              <li><a href="http://instagram.com/mextures"><i class="icon-instagram"></i></a></li>
-              <li><a href="https://twitter.com/mextures"><i class="icon-twitter"></i></a></li>
-            </ul>
-            <ul class="bottomNav no-mobile">
-              <li><a href="#features">FEATURES</a></li>
-              <li><a href="#gallery">GALLERY</a></li>
-              <li><a href="http://cloud.merekdavis.com/W2Dz">PRESS KIT</a></li>
-              <li><a href="mailto:feedback@mextures.zendesk.com">CONTACT</a></li>
-            </ul>
-            <ul class="mobile"><div class="picker">
-              <li>
-                  <select name="forma" onchange="location = this.options[this.selectedIndex].value;">
-                    <option>Navigate to…</option>
-                    <option value="#features">Features</option>
-                    <option value="#gallery">Gallery</option>
-                    <option value="http://cloud.merekdavis.com/W2Dz">Press Kit</option>
-                    <option value="mailto:feedback@mextures.zendesk.com">Contact</option>
-                  </select>
-                </li></div>
-              
-            </ul>            
-          </div>
-        </div>
- -->
+{% endblock %}

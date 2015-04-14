@@ -7,3 +7,11 @@ create table stories (
   character text not null,
   script text not null
 );
+
+drop table if exists images;
+create table images (
+	id integer primary key autoincrement,
+	title text not null,
+	page integer not null,
+	picture blob
+);
