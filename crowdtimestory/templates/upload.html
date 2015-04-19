@@ -8,13 +8,14 @@
 {% block content %}
 <div id="upload_book">
 	<h2>Upload a book</h2>
-		<form>
+		<form action="/upload/upload_image" method="POST" enctype="multipart/form-data">
 			Book Title:<br>
 				<input type="text" id="book_title" name="book_title"><br>
 				
 				Author:<br>
 				<input type="text" id="book_author" name="book_author"><br>
-					
+
+
 				Images (hold ctrl to select multiple files): <br>
 				<input type="file" id="image_files" name="image_files" multiple /><br>
 					
@@ -76,72 +77,6 @@ function isAPIAvailable() {
 		return false;
 	}
 }
-function handleFileSelect(evt) {
-	var files = evt.target.files; // FileList object
-	var file_names = "";
-	for (i = 0; i < files.length; i++){ // Handle each file
-		var file = files[i];
-		var new_file_name = escape(file.name).replace(/%20/g, " ").replace("%2D", "-").replace("%5F", "_");
-		
-		file_names = file_names + " " + new_file_name;
-		if(i != files.length - 1){
-			file_names = file_names + ",";
-		}
-	}
-	alert("uploaded " + file_names);
-}
-// when the user clicks on the search bar
-function begin_search(e, t){
-	t.value = ""
-	$("#search_bar").css("color", "black");
-}
-
-// when the user performs a key word search through the book list
-function search_shelf(e, t){
-	var code = (e.keyCode ? e.keyCode : e.which);
-	if(code == 13) { // if 'Enter' is pressed, perform search.
-		alert('searched for "' + t.value + '"');
-}
-}
-
-// when the user filters the displayed book list by the first letter of the book title
-function list_filter(e, t){
-	alert("filter books from " + t.innerHTML);
-}
-
-function book_select(e, t){
-	alert("selected book " + t.innerHTML);
-}
-
-// handles the image files when the user decide to upload a picture book
-$(document).ready(function() {
-	if(isAPIAvailable()) {
-		$('#image_files').bind('change', handleFileSelect);
-	}
-});
-function isAPIAvailable() {
-	// Check for the various File API support.
-	if (window.File && window.FileReader && window.FileList && window.Blob) {
-		// Great success! All the File APIs are supported.
-		return true;
-	} else {
-		// source: File API availability - http://caniuse.com/#feat=fileapi
-		// source: <output> availability - http://html5doctor.com/the-output-element/
-		document.writeln('The HTML5 APIs used in this form are only available in the following browsers:<br />');
-		// 6.0 File API & 13.0 <output>
-		document.writeln(' - Google Chrome: 13.0 or later<br />');
-		// 3.6 File API & 6.0 <output>
-		document.writeln(' - Mozilla Firefox: 6.0 or later<br />');
-		// 10.0 File API & 10.0 <output>
-		document.writeln(' - Internet Explorer: Not supported (partial support expected in 10.0)<br />');
-		// ? File API & 5.1 <output>
-		document.writeln(' - Safari: Not supported<br />');
-		// ? File API & 9.2 <output>
-		document.writeln(' - Opera: Not supported');
-		return false;
-	}
-}
-
 function handleFileSelect(evt) {
 	var files = evt.target.files; // FileList object
 	var file_names = "";
