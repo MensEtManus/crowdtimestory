@@ -11,49 +11,28 @@
 	<script src="../static/js/recorder.js"></script>
 </head>
 <body>
-	<!--
 	<h1>Instructions</h1>
-	<p>The audio recorded will be used in a class project with care.</p>
-	-->
+	<p>Please make sure your device is connected to a mic before you proceed</p>
+	<p>The audio parts recorded will be used in a class project with care.</p>
 
-	<form id="voice_acting" action="." method="POST" onsubmit="submitForm()">
+	<form id="voice_acting" action="." method="POST" onsubmit="submitForm()"><!-- will need to submit to a wait page for result instead of '.'-->
 		<input type="hidden" name="story" value="story_name">
 		<input type="hidden" name="char" value="char_name">
-		<p>please record the voice acting for character <b>"char"</b></p>
-		
-		<input type="hidden" name="line1" value="story_pg_line">Yes Sir!<br>
-		<button onclick="startRecording(this, 1); return false;">record</button>
-		<button onclick="stopRecording(this, 1); return false;" disabled>stop</button>
-		<button onclick="deleteRecording(this, 1); return false;" disabled>delete</button>
-		<ul id="audplayer1"></ul>
-		<br>
-		
-		<input type="hidden" name="line2" value="story_pg_line">No Sir!<br>
-		<button onclick="startRecording(this, 2); return false;">record</button>
-		<button onclick="stopRecording(this, 2); return false;" disabled>stop</button>
-		<button onclick="deleteRecording(this, 2); return false;" disabled>delete</button>
-		<ul id="audplayer2"></ul>
-		<br>
-		
-		<input type="hidden" name="line3" value="story_pg_line">Because I have a cold sir!<br>
-		<button onclick="startRecording(this, 3); return false;">record</button>
-		<button onclick="stopRecording(this, 3); return false;" disabled>stop</button>
-		<button onclick="deleteRecording(this, 3); return false;" disabled>delete</button>
-		<ul id="audplayer3"></ul>
-		<br>
-		
-		<input type="submit" value="Submit">
+		<p>please record the voice acting audio parts for character <b>"{{character}}"</b> from the story <b>"{{story}}"</b></p>
+		<!--<input type="submit" value="Submit">-->
 	</form>
 	
 	<h2 style="display: none;">Log</h2>
 	<pre id="log" style="display: none;"></pre>
 
 	<script>
-		var story;
-		var character;
+		var story = "{{story}}";
+		var character = "{{character}}";
+		var entries = {{entries|tojson}};
+		var voiceBlob = [];
+		
 		var audio_context;
 		var recorder;
-		var voiceBlob = [];
 		
 		window.onload = function init() {
 			try {
@@ -73,11 +52,16 @@
 			  __log('No live audio input: ' + e);
 			});
 			
-			// loading basic info of the task
-			story = "testing_story";
-			character = "narrator";
-			// insert lines for recording
-			
+			// loading input field data
+			$('[name="story"]')[0].value = story;
+			$('[name="char"]')[0].value = character;
+			for (var i = 0; i < entries.length; i++){
+				var page = entries[i].page;
+				var line = entries[i].line;
+				var script = entries[i].script;
+				$("#voice_acting").append('<input type="hidden" name="line'+i+'" value="'+story+'_'+page+'_'+line+'">'+script+'<br><button onclick="startRecording(this); return false;">record</button><button onclick="stopRecording(this, '+i+'); return false;" disabled>stop</button><button onclick="deleteRecording(this, '+i+'); return false;" disabled>delete</button><ul id="audplayer'+i+'"></ul><br>');
+			}
+			$("#voice_acting").append('<input type="submit" value="Submit">');
 		};
 		
 		function startUserMedia(stream) {
@@ -92,7 +76,7 @@
 			__log('Recorder initialised.');
 		}
 
-		function startRecording(button, line) {
+		function startRecording(button) {
 			recorder && recorder.record();
 			// disable "record"
 			button.disabled = true;
@@ -120,19 +104,19 @@
 				var url = URL.createObjectURL(blob);
 				var li = document.createElement('li');
 				var au = document.createElement('audio');
-				var hf = document.createElement('a');
+				//var hf = document.createElement('a');
 
 				au.controls = true;
 				au.src = url;
-				hf.href = url;
-				hf.download = new Date().toISOString() + '.wav';
-				hf.innerHTML = hf.download;
+				//hf.href = url;
+				//hf.download = new Date().toISOString() + '.wav';
+				//hf.innerHTML = hf.download;
 				li.appendChild(au);
-				li.appendChild(hf);
+				//li.appendChild(hf);
 				// insert replay and download link
 				$("#audplayer"+line)[0].appendChild(li);
 				// store recording file into the upload queue - need to change the story_pg_line
-				voiceBlob.push({name:"voice" + line, value:blob, filename:story+"_pg_"+line+".wav"});
+				voiceBlob.push({name:"voice" + line, value:blob, filename:$('[name="line'+line+'"]')[0].value+".wav"});
 				
 				// store url in an input field - might not be necessary 
 				//$("#voice_acting").append('<input type="hidden" class="voice_url" name="voice_url' + line + '" value="' + url + '">');
@@ -159,35 +143,39 @@
 		}
 		
 		function submitForm(){
-			// check if each line has a recording recorded
-			
-			// sort and upload files in order just to feel good about it
-			voiceBlob.sort(function(a, b){
-				if(a.name < b.name){
-					return -1;
-				}else{
-					return 1;
-				}
-			});
-		
-			// append and send each entry from voiceBlob into formData and upload through AJAX			
-			for(i = 0; i < voiceBlob.length; i++){
-				var form_data = new FormData($("form")[0]);
-				// form_data.append(name, file, filename);
-				//form_data.append(voiceBlob[i].name, voiceBlob[i].value, voiceBlob[i].filename);
-				form_data.append("wav", voiceBlob[i].value, voiceBlob[i].filename);
-				$.ajax({
-					type: 'POST',
-					url: '/upload_aud',
-					data: form_data,
-					processData: false,
-					contentType: false
-				}).done(function(data){
-					//console.log(data);
+			// check if each line has a voice part recorded
+			if(voiceBlob.length == entries.length){
+				// sort and upload files in order just to feel good about it
+				voiceBlob.sort(function(a, b){
+					if(a.name < b.name){
+						return -1;
+					}else{
+						return 1;
+					}
 				});
-			}		
-			console.log('form submitted');
-			event.preventDefault(); // temporarily not allowing it to submit the rest of the form, but later on the actual submission will allow system to keep track of the progress of collecting recordings. 
+			
+				// append and send each entry from voiceBlob into formData and upload through AJAX			
+				for(i = 0; i < voiceBlob.length; i++){
+					var form_data = new FormData($("form")[0]);
+					// form_data.append(name, file, filename);
+					//form_data.append(voiceBlob[i].name, voiceBlob[i].value, voiceBlob[i].filename);
+					form_data.append("wav", voiceBlob[i].value, voiceBlob[i].filename);
+					$.ajax({
+						type: 'POST',
+						url: '/upload_aud',
+						data: form_data,
+						processData: false,
+						contentType: false
+					}).done(function(data){
+						//console.log(data);
+					});
+				}		
+				console.log('form submitted');
+				event.preventDefault(); // temporarily not allowing it to submit the rest of the form, but later on the actual submission will allow system to keep track of the progress of collecting recordings. 
+			}else{
+				alert("Please record every line before you submit the form, thank you");
+				event.preventDefault();
+			}
 		}
 
 		function __log(e, data) {
