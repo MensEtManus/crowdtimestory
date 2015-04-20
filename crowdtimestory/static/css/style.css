@@ -87,21 +87,25 @@ hr {
   background-size: cover;
 }
 #singlebutton {
-  background: white;
-  color: #46AAB0;
-  position: relative;
+  color: white;
+  background: transparent;
+  background-opacity: 0;
   border-width: 3px;
-  border-color: #EFEFEF;
+  position: relative;
+  border-radius: 3px;
+  border-width: 3px;
+  border-color: #EFEFEF;  
   width:200px;
-  margin-top:-70px;
+  height: 40px;
+  margin-top:-345px;
   text-align:center;
   z-index: 3;
 }
 #singlebutton:hover {
-  color: #EFEFEF;
-  background: transparent;
-  background-opacity: 0.1;
-  border-width: 3px;
+  background: white;
+  color: #46AAB0;
+  border-color: #EFEFEF;
+  
 }
 .sec-main2 {
   color:white;

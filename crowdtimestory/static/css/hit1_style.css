@@ -1,0 +1,76 @@
+.row{
+	margin-bottom: 3em;
+}
+#char1  {
+	margin-top: 10px;
+	margin-left:auto;
+	width: 750px;
+	height: 450px;
+	position: fixed;
+	padding: 5px;
+	border-width: 20px;
+	border-color: black;
+}
+#char> input{
+	width: 120px;
+	margin-left: 30%;
+	margin-top: 10px;
+}
+img {
+	margin-top: 25px;
+	max-width:720px;
+	max-height: 450px;
+	position: fixed;
+}
+#charchoice> input {
+	width: 100px;
+}
+#charchoice {
+	margin-top: 20px;
+	margin-left: 760px;
+}
+#text {
+	margin-left: 850px;
+}
+#submit {
+	width:200px;
+	padding: 100;
+	margin: 100;
+}
+
+input {
+	width: 60%;
+	padding: 5px 0px 5px 5px;
+	font-size: 16px;
+}
+form> div {
+	border-left: thick solid #ff0000;
+	margin-left: 750px;
+	padding-left: 10px;
+	padding-bottom: 10px;
+}
+#add_char> input {
+	width: 120px;
+}
+#add_line> input {
+	width: 100px;
+}
+
+button{
+	background: transparent;
+	border:none;
+	box-shadow: none;
+	outline: none;
+}
+#add_char {
+	height: 40px;
+	margin-left: 20px;
+}
+#add_line{
+	height:  40px;
+	margin-left: 900px;
+	margin-top: 10px;
+}
+form> input {
+margin-left:850px; 
+}
