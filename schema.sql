@@ -13,5 +13,5 @@ create table images (
 	id integer primary key autoincrement,
 	title text not null,
 	page integer not null,
-	picture blob
+  pic_path text not null
 );

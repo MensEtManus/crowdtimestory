@@ -35,6 +35,9 @@ app.register_blueprint(home)
 from crowdtimestory.upload.views import upload
 app.register_blueprint(upload)
 
+# setup script blueprint
+from crowdtimestory.script.views import script 
+app.register_blueprint(script)
 
 @app.route('/')
 def index():

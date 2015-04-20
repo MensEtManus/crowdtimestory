@@ -23,12 +23,19 @@ def allowed_file(filename):
 def upload_image():
     if request.method == 'POST':
         files = request.files.getlist('image_files')
-        subfolder = secure_filename(request.form['book_title'])
+        book_title = secure_filename(request.form['book_title'])
+        try:
+          con = sqlite3.connect('/db/story.db')
+          cursor = con.cursor()
+        except lite.Error, e:
+          if con:
+            con.rollback()
+          print "Error %s:" % e.args[0]
         for photo in files:
             if photo and allowed_file(photo.filename):
                 filename = secure_filename(photo.filename)
-                dir = UPLOAD_FOLDER + subfolder
-                path = os.path.join(dir, filename)
+                dir = UPLOAD_FOLDER + book_title
+                pic_path = os.path.join(dir, filename)
                 try: 
                     if not os.path.exists(dir):
                         os.makedirs(dir)
@@ -36,6 +43,11 @@ def upload_image():
                     if not os.path.isdir(dir):
                         raise
                 photo.save(os.path.join(dir, filename))
+                sql = "INSERT INTO images(title, page, pic_path) VALUES (?,?,?)", (book_title, page, pic_path) 
+                cur.execute(sql)
+                con.commit()  
+        if con:
+          con.close()
         return redirect(url_for('home.index'))
     return redirect(url_for('upload.index'))
 
