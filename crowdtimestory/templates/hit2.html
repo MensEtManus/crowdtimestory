@@ -162,7 +162,7 @@
 					form_data.append("wav", voiceBlob[i].value, voiceBlob[i].filename);
 					$.ajax({
 						type: 'POST',
-						url: '/upload_aud',
+						url: '/record/upload_aud',
 						data: form_data,
 						processData: false,
 						contentType: false
