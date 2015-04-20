@@ -1,16 +1,14 @@
-<!DOCTYPE html>
-<html>
-<head>
- <meta charset="UTF-8">
-	<title>Image to Text script</title>
-	<link rel="stylesheet" type="text/css" href="../static/css/hit1_style.css">
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
-	<script type="text/javascript" src="../static/js/jquery.min.js"></script>
-</head>
-<body>
+{% extends "index.html" %}
+
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="../static/css/hit1_style.css">
+{% endblock %}
+
+
+{% block content %}
 <div><h1>Enter the text lines in the picture here..</h1><hr></div>
 <div id="char1">
-<img id="img" src="1.jpg">
+<img id="img" src="../static/images/1.jpg">
 </div>
 <div id="script">
 	<div id="text">Enter the characters below</br></div>
@@ -47,6 +45,9 @@
 	<div id="line"><button id="add_line" value="add"><input type="image" src="add2.png"/></button></div>
 	</br>
 </div>
+{% endblock %}
+
+{% block js %}
 <script type="text/javascript">
 $('#line').click(function() {
     $('<div><span><select class="char-list"></select> </span><input type="text"/></br></div>')
@@ -72,6 +73,4 @@ $('#add_char').click(function() {
         .prependTo($('#charchoice'));
 });
 </script>
-
-</body>
-</html>
+{% endblock %}

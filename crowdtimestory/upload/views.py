@@ -3,6 +3,7 @@ from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, Blueprint
 import sys, os
 from werkzeug import secure_filename
+import re
 
 UPLOAD_FOLDER = "crowdtimestory/static/images/"
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
@@ -19,6 +20,14 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
+def get_page_num(photo):
+    pattern = r'\d+'
+    match = re.search(pattern, photo)
+    if match:
+        return match.group()
+
+
+
 @upload.route('/upload_image', methods=['GET', 'POST'])
 def upload_image():
     if request.method == 'POST':
@@ -27,13 +36,15 @@ def upload_image():
         try:
           con = sqlite3.connect('/db/story.db')
           cursor = con.cursor()
-        except lite.Error, e:
+        except sqlite3.Error, e:
           if con:
             con.rollback()
           print "Error %s:" % e.args[0]
         for photo in files:
             if photo and allowed_file(photo.filename):
                 filename = secure_filename(photo.filename)
+                # get the page num from the file name
+                page = get_page_num(filename)
                 dir = UPLOAD_FOLDER + book_title
                 pic_path = os.path.join(dir, filename)
                 try: 
