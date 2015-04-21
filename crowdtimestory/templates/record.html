@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Crowd Time Story - Script</title>
+	<script src="../static/js/jquery-1.11.0.min.js"></script>
+</head>
+<body>
+	<div id="script_ui">
+		<h2>Audio book script for "{{story}}"</h2>
+		<div id="script"></div>
+		<br>
+		<input class="surprise" type="button" name="Customize" value="Customize" onclick="customize_script()">
+		<input class="surprise" type="button" name="Approve" value="Approve" onclick="send_HITS()">
+		<p id="pull_status"></p>
+	</div>
+	<script>
+		var story = "{{story}}";
+		var entries = {{entries|tojson}};
+		for(var i = 0; i < entries.length; i++){
+			$("#script").append("<span class='script_line' id='line"+i+"'><b>"+entries[i].character+"</b>: "+entries[i].script+"</span><br/>");
+		}
+		
+		function customize_script(){
+			alert("The customizing script function is currently being implemented, we apologize for the inconvenience");
+		}
+		
+		function send_HITS(){
+			$.ajax({
+				type: 'POST',
+				url: '/record/send_hit_type_2?story=' + story,
+				processData: false,
+				contentType: false
+			}).done(function(data){
+				console.log(data);
+				pull_results();
+			});
+		}
+		
+		function pull_results(){
+			$.ajax({
+				type: 'POST',
+				url: '/record/check_results',
+				processData: false,
+				contentType: false
+			}).done(function(data){
+				console.log(data)
+				if(data == 'done'){
+					window.location='/record/result?&story=' + story;
+				}else{
+					setTimeout(pull_results(), 100000);
+				}
+			});
+		}
+	</script>
+</body>
+</html>
