@@ -20,7 +20,7 @@ hit_type = cl.create_hit_type(
 @record.route('/')
 def index():
 	story = request.args.get('story')
-	cur = g.db.execute('SELECT character, script FROM stories WHERE title = "' + story + '"')
+	cur = g.db.execute('SELECT character, script FROM story WHERE title = "' + story + '"')
 	entries = [dict(character=row[0], script=row[1]) for row in cur.fetchall()]
 	
 	return render_template('record.html', story=story, entries=entries)
@@ -33,18 +33,21 @@ def send_hit_type_2():
 	story = request.args.get('story')
 	
 	# the total number of characters in the story = the number of HITS to send
-	len = g.db.execute('SELECT COUNT(DISTINCT character) FROM stories').fetchall()[0][0]
+	len = g.db.execute('SELECT COUNT(DISTINCT character) FROM story').fetchall()[0][0]
+	
+	# the total number of lines in the story = the number of AUD to receive
+	aud_len = g.db.execute('SELECT COUNT(*) FROM story').fetchall()[0][0]
+	HITS_SENT = HITS_SENT + aud_len
 	
 	# a list of all the characters in the story
-	parts = g.db.execute('SELECT DISTINCT character FROM stories').fetchall()
+	parts = g.db.execute('SELECT DISTINCT character FROM story').fetchall()
 	
 	# for each character (parts[i][0]) i = 0; i < len; len++) send a hit out with the parameter story and charcter
 	for x in range(0, len):
 		hit = hit_type.create_hit(
 		  url = "https://128.46.32.82:8012/record/hit_type_2?story=" + story + "&character=" + parts[x][0],
-		  height = 300
+		  height = 800
 		)
-		HITS_SENT = HITS_SENT + 1
 	
 	return 'your audio book is being created at this moment, please wait patiently'
 	
@@ -56,7 +59,7 @@ def hit_type_2():
 	assignmentId = request.args.get('assignmentId')
 	turkSubmitTo = request.args.get("turkSubmitTo")
 	
-	cur = g.db.execute('SELECT page, line_num, script FROM stories WHERE title="' + story + '" AND character = "' + character + '"')
+	cur = g.db.execute('SELECT page, line_num, script FROM story WHERE title="' + story + '" AND character = "' + character + '"')
 	
 	entries = [dict(page=row[0], line=row[1], script=row[2]) for row in cur.fetchall()]
 	
@@ -81,16 +84,16 @@ def check_results():
 	if AUD_SUBMITTED == HITS_SENT:
 		return 'done'
 	else:	
-		return 'waiting for ' + str(HITS_SENT - AUD_SUBMITTED) + 'more HITS to be completed'
+		return 'waiting for ' + str(HITS_SENT - AUD_SUBMITTED) + ' more recordings to be completed'
 	
 # displays final result
 @record.route('/result', methods=['GET'])
 def result():
 	story = request.args.get('story')
 	
-	pages = g.db.execute('SELECT COUNT(DISTINCT page) FROM stories').fetchall()[0][0]
+	pages = g.db.execute('SELECT COUNT(DISTINCT page) FROM story').fetchall()[0][0]
 	
-	cur = g.db.execute('SELECT page, line_num FROM stories WHERE title="' + story +'"')
+	cur = g.db.execute('SELECT page, line_num FROM story WHERE title="' + story +'"')
 	entries = [dict(page=row[0], line=row[1]) for row in cur.fetchall()]
 	
 	return render_template('result.html', story=story, pages=pages, entries=entries)
@@ -111,12 +114,3 @@ def sendHIT():
 def cancelHIT():
 	cl.set_all_hits_unavailable()
 	return 'HIT has been cancelled'
-	
-@record.route('/reportHIT', methods=['GET'])
-def reportHIT():
-	while hit_type.is_available:
-		time.sleep(10)
-	print 'hit is done'
-	
-	return 'watch for report on console'
-

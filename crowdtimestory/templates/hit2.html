@@ -15,17 +15,12 @@
 	<p>Please make sure your device is connected to a mic before you proceed</p>
 	<p>The audio parts recorded will be used in a class project with care.</p>
 
-	<!--<form id="voice_acting" action="." method="POST" onsubmit="submitForm()">-->
-	<form id="voice_acting" action="{{turkSubmitTo}}/mturk/externalSubmit" method="POST" onsubmit="submitForm(event)"><!-- will need to submit to a wait page for result instead of '.'-->
+	<form id="voice_acting" action="{{turkSubmitTo}}/mturk/externalSubmit" method="POST" onsubmit="submitForm(event)">
 		<input type="hidden" name="assignmentId" value="{{assignmentId}}">
 		<input type="hidden" name="story" value="story_name">
 		<input type="hidden" name="char" value="char_name">
 		<p>please record the voice acting audio parts for character <b>"{{character}}"</b> from the story <b>"{{story}}"</b></p>
-		<!--<input type="submit" value="Submit">-->
 	</form>
-	
-	<h2 style="display: none;">Log</h2>
-	<pre id="log" style="display: none;"></pre>
 
 	<script>
 		var story = "{{story}}";
@@ -36,6 +31,8 @@
 		var audio_context;
 		var recorder;
 		
+		var submit_ready = false;
+		
 		window.onload = function init() {
 			try {
 				// webkit shim
@@ -44,15 +41,11 @@
 				window.URL = window.URL || window.webkitURL;
 
 				audio_context = new AudioContext;
-				__log('Audio context set up.');
-				__log('navigator.getUserMedia ' + (navigator.getUserMedia ? 'available.' : 'not present!'));
 			} catch (e) {
 			  alert('No web audio support in this browser!');
 			}
 
-			navigator.getUserMedia({audio: true}, startUserMedia, function(e) {
-			  __log('No live audio input: ' + e);
-			});
+			navigator.getUserMedia({audio: true}, startUserMedia, function(e){});
 			
 			// loading input field data
 			$('[name="story"]')[0].value = story;
@@ -72,14 +65,11 @@
 		
 		function startUserMedia(stream) {
 			var input = audio_context.createMediaStreamSource(stream);
-			__log('Media stream created.');
 
 			// Uncomment if you want the audio to feedback directly
 			//input.connect(audio_context.destination);
-			//__log('Input connected to audio context destination.');
 
 			recorder = new Recorder(input);
-			__log('Recorder initialised.');
 		}
 
 		function startRecording(button) {
@@ -88,7 +78,6 @@
 			button.disabled = true;
 			// enable "stop"
 			button.nextElementSibling.disabled = false;
-			__log('Recording...');
 		}
 
 		function stopRecording(button, line) {
@@ -97,7 +86,6 @@
 			button.disabled = true;
 			// enable "delete"
 			button.nextElementSibling.disabled = false;
-			__log('Stopped recording.');
 
 			// create WAV download link using audio data blob
 			createDownloadLink(line);
@@ -114,18 +102,11 @@
 
 				au.controls = true;
 				au.src = url;
-				//hf.href = url;
-				//hf.download = new Date().toISOString() + '.wav';
-				//hf.innerHTML = hf.download;
 				li.appendChild(au);
-				//li.appendChild(hf);
 				// insert replay and download link
 				$("#audplayer"+line)[0].appendChild(li);
 				// store recording file into the upload queue - need to change the story_pg_line
 				voiceBlob.push({name:"voice" + line, value:blob, filename:$('[name="line'+line+'"]')[0].value+".wav"});
-				
-				// store url in an input field - might not be necessary 
-				//$("#voice_acting").append('<input type="hidden" class="voice_url" name="voice_url' + line + '" value="' + url + '">');
 			});
 		}
 				
@@ -141,54 +122,56 @@
 			button.previousElementSibling.previousElementSibling.disabled = false;
 			// remove recording file from the upload queue 
 			voiceBlob = $.grep(voiceBlob, function(e){return e.name != "voice" + line});
-			
-			// remove recording_url from interface
-			//$('[name="voice_url' + line + '"]')[0].remove();
-			
-			__log('delete current recording for line ' + line);
 		}
 		
 		function submitForm(event){
+			console.log(submit_ready);
 			// check if each line has a voice part recorded
-			if(voiceBlob.length == entries.length){
-				// sort and upload files in order just to feel good about it
-				voiceBlob.sort(function(a, b){
-					if(a.name < b.name){
-						return -1;
-					}else{
-						return 1;
-					}
-				});
-			
-				// append and send each entry from voiceBlob into formData and upload through AJAX			
-				for(i = 0; i < voiceBlob.length; i++){
-					var form_data = new FormData($("form")[0]);
-					// form_data.append(name, file, filename);
-					//form_data.append(voiceBlob[i].name, voiceBlob[i].value, voiceBlob[i].filename);
-					form_data.append("wav", voiceBlob[i].value, voiceBlob[i].filename);
-					$.ajax({
-						type: 'POST',
-						url: '/record/upload_aud',
-						//url: '128.46.32.82:8012/record/upload_aud',
-						data: form_data,
-						processData: false,
-						contentType: false
-					}).done(function(data){
-						if(data == 'success'){
-							console.log("file stored");
-						}else{
-							console.log("file not stored");
-						}
-					});
+			if(voiceBlob.length == entries.length){				
+				if(!submit_ready){
+					upload_aud();
+					event.preventDefault();
 				}
 			}else{
 				alert("Please record every line before you submit the form, thank you");
 				event.preventDefault();
 			}
 		}
-
-		function __log(e, data) {
-			log.innerHTML += "\n" + e + " " + (data || '');
+		
+		function upload_aud(){
+			// sort and upload files in order just to feel good about it
+			voiceBlob.sort(function(a, b){
+				if(a.name < b.name){
+					return -1;
+				}else{
+					return 1;
+				}
+			});
+		
+			for(i = 0; i < voiceBlob.length; i++){
+				var form_data = new FormData($("form")[0]);
+				// form_data.append(name, file, filename);
+				form_data.append("wav", voiceBlob[i].value, voiceBlob[i].filename);
+				$.ajax({
+					type: 'POST',
+					url: '/record/upload_aud',
+					//url: '128.46.32.82:8012/record/upload_aud',
+					data: form_data,
+					processData: false,
+					contentType: false,
+					async: false
+				}).done(function(data){
+					if(data == 'success'){
+						console.log("file"+i+" stored");
+					}else{
+						console.log("file"+i+" not stored");
+					}
+					if(i == (voiceBlob.length-1)){
+						submit_ready = true;
+						$("form")[0].submit();
+					}
+				});
+			}
 		}
 	</script>
 </body>
