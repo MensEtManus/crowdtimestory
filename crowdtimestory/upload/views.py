@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, \
-     abort, render_template, Blueprint
+    abort, render_template, Blueprint, sqlite3
 import sys, os
 from werkzeug import secure_filename
 import re
@@ -40,6 +40,12 @@ def upload_image():
             if con:
                 con.rollback()
             log.error("Error %s:" % e.args[0])
+            con = sqlite3.connect('crowdtimestory/db/story.db')
+            cursor = con.cursor()
+        except sqlite3.Error, e:
+          if con:
+            con.rollback()
+          print "Error %s:" % e.args[0]
         for photo in files:
             if photo and allowed_file(photo.filename):
                 filename = secure_filename(photo.filename)
