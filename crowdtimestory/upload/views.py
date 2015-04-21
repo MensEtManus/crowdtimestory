@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, \
-     abort, render_template, Blueprint
+     abort, render_template, Blueprint, sqlite3
 import sys, os
 from werkzeug import secure_filename
 
@@ -27,7 +27,7 @@ def upload_image():
         try:
           con = sqlite3.connect('/db/story.db')
           cursor = con.cursor()
-        except lite.Error, e:
+        except sqlite3.Error, e:
           if con:
             con.rollback()
           print "Error %s:" % e.args[0]
