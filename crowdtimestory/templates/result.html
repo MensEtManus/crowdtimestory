@@ -49,14 +49,8 @@
 			$("#aud").empty();
 			for(var i = 1; i <= $.grep(entries, function(e){return e.page == page}).length; i++){
 				$("#aud").append('<audio onended="play_aud('+i+')" id="aud'+i+'" controls><source src="../static/audio/'+audio_path+'_'+page+'_'+i+'.wav"></audio><br>');
-				/*
-				$("#aud"+i)[0].onended = function() {
-					play();
-				};
-				*/
 			}
 		}
-		
 	</script>
 </body>
 </html>

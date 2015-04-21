@@ -44,7 +44,7 @@
 				processData: false,
 				contentType: false
 			}).done(function(data){
-				console.log(data)
+				$("#pull_status")[0].innerHTML = data;
 				if(data == 'done'){
 					window.location='/record/result?&story=' + story;
 				}else{
