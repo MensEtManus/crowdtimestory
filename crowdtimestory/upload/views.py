@@ -43,9 +43,9 @@ def upload_image():
             con = sqlite3.connect('crowdtimestory/db/story.db')
             cursor = con.cursor()
         except sqlite3.Error, e:
-          if con:
-            con.rollback()
-          print "Error %s:" % e.args[0]
+            if con:
+                con.rollback()
+                print "Error %s:" % e.args[0]
         for photo in files:
             if photo and allowed_file(photo.filename):
                 filename = secure_filename(photo.filename)
