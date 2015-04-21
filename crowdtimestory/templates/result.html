@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Your Audio Book!</title>
+	<style type='text/css'>
+		ul { list-style: none; }
+	</style>
+	<script src="../static/js/jquery-1.11.0.min.js"></script>
+</head>
+<body>
+	<button onclick="prev_page();"><<</button>
+	<button onclick="play_aud(0);">play</button>
+	<button onclick="next_page();">>></button>
+	<br>
+	<img id="pic" src="">
+	<div id="aud"></div>
+
+	<script>
+		var story = "{{story}}";
+		var image_path = story.toLowerCase().split(' ').join('_');
+		var audio_path = story.split(' ').join('_');
+		
+		var entries = {{entries|tojson}};
+		var page_max = {{pages}};
+		
+		var page = 1;
+		load_page(page);
+		
+		function play_aud(i){
+			//alert("playing line " + line);
+			if(i >= 0 && i < $.grep(entries, function(e){return e.page == page}).length){
+				$("audio")[i].play();
+			}			
+		}
+		
+		function prev_page(){
+			page = Math.max(1, page - 1);
+			load_page(page)
+		}
+		
+		function next_page(){
+			page = Math.min(page_max, page + 1);
+			load_page(page);
+		}
+		
+		function load_page(page){
+			$("#pic")[0].src = "../static/images/"+image_path+"/page"+page+".jpg"
+			
+			$("#aud").empty();
+			for(var i = 1; i <= $.grep(entries, function(e){return e.page == page}).length; i++){
+				$("#aud").append('<audio onended="play_aud('+i+')" id="aud'+i+'" controls><source src="../static/audio/'+audio_path+'_'+page+'_'+i+'.wav"></audio><br>');
+				/*
+				$("#aud"+i)[0].onended = function() {
+					play();
+				};
+				*/
+			}
+		}
+		
+	</script>
+</body>
+</html>

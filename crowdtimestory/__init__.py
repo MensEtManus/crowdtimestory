@@ -17,6 +17,9 @@ SECRET_KEY = 'development key'
 USERNAME = 'admin'
 PASSWORD = 'default'
 
+PORT = 8012
+URL_PREFIX = '/%02d'%(PORT % 100)
+
 # create the application
 app = Flask(__name__)
 
@@ -43,7 +46,7 @@ app.register_blueprint(record)
 
 @app.route('/')
 def index():
-    return render_template('index.html') 
+	return render_template('index.html') 
 
 def connect_db():
     return sqlite3.connect(DATABASE)
@@ -54,9 +57,6 @@ def init_db():
         with app.open_resource('schema.sql', mode='r') as f:
             db.cursor().executescript(f.read())
         db.commit()
-		
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
 
 @app.before_request
 def before_request():
