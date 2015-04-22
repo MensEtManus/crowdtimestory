@@ -33,14 +33,14 @@ def send_hit_type_2():
 	story = request.args.get('story')
 	
 	# the total number of characters in the story = the number of HITS to send
-	len = g.db.execute('SELECT COUNT(DISTINCT character) FROM story').fetchall()[0][0]
+	len = g.db.execute('SELECT COUNT(DISTINCT character) FROM story WHERE title="' + story +'"').fetchall()[0][0]
 	
 	# the total number of lines in the story = the number of AUD to receive
-	aud_len = g.db.execute('SELECT COUNT(*) FROM story').fetchall()[0][0]
+	aud_len = g.db.execute('SELECT COUNT(*) FROM story WHERE title="' + story +'"').fetchall()[0][0]
 	HITS_SENT = HITS_SENT + aud_len
 	
 	# a list of all the characters in the story
-	parts = g.db.execute('SELECT DISTINCT character FROM story').fetchall()
+	parts = g.db.execute('SELECT DISTINCT character FROM story WHERE title="' + story +'"').fetchall()
 	
 	# for each character (parts[i][0]) i = 0; i < len; len++) send a hit out with the parameter story and charcter
 	for x in range(0, len):
@@ -69,13 +69,15 @@ def hit_type_2():
 @record.route('/upload_aud', methods=['POST'])
 def upload_aud():
 	global AUD_SUBMITTED
-	AUD_SUBMITTED = AUD_SUBMITTED + 1
 
 	wav = request.files['wav']
 	wav.headers['Content-Type'] = 'audio/wav'
 	if wav and allowed_file(wav.filename):
 		filename = secure_filename(wav.filename)
 		wav.save(os.path.join(UPLOAD_FOLDER, filename))
+		
+	AUD_SUBMITTED = AUD_SUBMITTED + 1
+	
 	return 'success'
 
 # check if the HITS are done
@@ -91,7 +93,7 @@ def check_results():
 def result():
 	story = request.args.get('story')
 	
-	pages = g.db.execute('SELECT COUNT(DISTINCT page) FROM story').fetchall()[0][0]
+	pages = g.db.execute('SELECT COUNT(DISTINCT page) FROM story WHERE title="' + story +'"').fetchall()[0][0]
 	
 	cur = g.db.execute('SELECT page, line_num FROM story WHERE title="' + story +'"')
 	entries = [dict(page=row[0], line=row[1]) for row in cur.fetchall()]
