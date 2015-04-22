@@ -13,6 +13,7 @@
 
 </head>
 <body>
+<div style="width:600px; margin-left:auto; margin-right:auto; padding:12px; border: 1px solid black">This HIT is part of a class project at Purdue University by Albert Yang, Calvin Yau, and Karthik Kanuganti.&nbsp; Feel free to email us at <a href="mailto:yang716@purdue.edu">yang716@purdue.edu</a> with any questions or concerns.&nbsp; In case you run into any bugs in our system, we will make sure that you are paid.</div>
 <div><h1>Enter the text lines in the picture here..</h1><hr></div>
 {% block conent %}
 <strong>This is for book: "{{book_title}}"</strong>
@@ -34,7 +35,7 @@
 
 	<form id="script_form" action="/script/script_result" method="POST">
 		<div id="lines">
-			Character name: <input type="text" name="character" style="width: 100px;">
+			Character: <input type="text" name="character" style="width: 100px;">
 			Text: <input type="text" name="text"/></br>  
 		</div>
 
@@ -55,7 +56,7 @@ var line_num = 1;
 
 console.log("we have " + line_num + " lines!!");
 $('#line').click(function() {
-    $('<div id="lines"> Character name: <input type="text" name="character" style="width: 100px;"> Text: <input type="text" name="text"/></br> </div>').appendTo($('#lines'));
+    $('<div id="lines"> Character: <input type="text" name="character" style="width: 100px;"> Text: <input type="text" name="text"/></br> </div>').appendTo($('#lines'));
     line_num += 1;
     console.log("we have " + line_num + " lines!!");
 });
