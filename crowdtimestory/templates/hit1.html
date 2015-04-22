@@ -4,11 +4,13 @@
  <meta charset="UTF-8">
 	<title>Image to Text script</title>
 	<link rel="stylesheet" type="text/css" href="../static/css/hit1_style.css">
+	<link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css'>
 	<!--
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
 	-->
 
 	<script type="text/javascript" src="../static/js/jquery-1.11.0.min.js"></script>
+
 </head>
 <body>
 <div><h1>Enter the text lines in the picture here..</h1><hr></div>
@@ -16,66 +18,97 @@
 <strong>This is for book: "{{book_title}}"</strong>
 {% endblock %}
 <div id="char1">
-<img id="img" src="../static/images/1.jpg">
+<img id="img" src="{{pic_path}}">
 </div>
 <div id="script">
-	<div id="text">Enter the characters below</br></div>
-	<div id="charchoice">
-	
-	<input class="characters" type="text" placeholder="Andy"/>
-	<input class="characters" type="text" placeholder="Brady"/>
-	<input class="characters" type="text" placeholder="Cody"/>
-	<input class="characters" type="text" placeholder="Didi"/>
-	<input class="characters" type="text" placeholder="Eddy"/>
-	<input id="submit_char" type="submit" name="Submit" value="Submit">
+	<!--
 	<div id="char"></br><button id="add_char"><input type="image" src="../static/images/add1.png"></button></div>
-	</div>
-	</br>
-	</br>
+	-->
 	
-	<form id="script_form" action="/script/script_result" method="POST">
-	<input id="pgno" type="hidden" value="pageno">
 
-		<div id="div1"><span><select class="char-list">
-					</select> </span><input type="text"/></br><input id="lineno" type="hidden" value="lineno"/></div>
-		<div><span><select class="char-list">
-		</select> </span><input type="text"/></br></div>
-		<div><span><select class="char-list">
-		</select> </span><input type="text"/></br></div>
-		<div><span><select class="char-list">
-		</select> </span><input type="text"/></br></div>
-		<div><span><select class="char-list">
-		</select> </span><input type="text"/></br></div>
-		<div><span><select class="char-list">
-		</select> </span><input type="text"/></br></div>
-	
-	</form>
-	<div id="line"><button id="add_line" value="add"><input type="image" src="../static/images/add2.png"/></button></div>
+	<div id="text">Please identify all the characters in the picture, and for each line enter the character name followed by the script for that character. If it is the narrator, just type "narrator" as the character name. Press "Add Line" button to add lines, and fill it out as instructed above!</br></div>
+
 	</br>
-	<input id="submit" type="submit" value="Submit"/>
+	</br>
+	<!-- {{turkSubmitTo}}/mturk/externalSubmit -->
+
+	<form id="script_form" action="{{turkSubmitTo}}/mturk/externalSubmit" method="POST">
+		<div id="lines">
+			Character name: <input type="text" name="character" style="width: 100px;">
+			Text: <input type="text" name="text"/></br>  
+		</div>
+		
+		<input id="submit" class="myButton" type="submit" value="Submit"/>
+	
+		<a href="#" id="line" class="myButton">Add Line</a>
+
+	</form>
+
+	
+	</br>
+	
 </div>
+
 <script type="text/javascript">
+var line_num = 1;
+
+console.log("we have " + line_num + " lines!!");
 $('#line').click(function() {
-    $('<div><span><select class="char-list"></select> </span><input type="text"/></br></div>')
-        .appendTo($('#script_form'));
+    $('<div id="lines"> Character name: <input type="text" name="character" style="width: 100px;"> Text: <input type="text" name="text"/></br> </div>').appendTo($('#lines'));
+    line_num += 1;
+    console.log("we have " + line_num + " lines!!");
 });
-$(function() {
-    $('input.characters').blur(function() {
-        var values = $('input.characters').filter(function(){ // discard fields with no value
-              return this.value != '';
-        }).map(function() { 
-              return $(this).val();       // return the value
-        }).get();                         // get the values
-        var $list = $('.char-list').empty();
-        for(var i in values) {
-           $('<option />').text(values[i]).appendTo($list);   // build and add options
-        }
-    });
-});
-$('#add_char').click(function() {
-   $('<input class="characters" type="text" placeholder="new">')
-        .prependTo($('#charchoice'));
-});
+
+
+function submitForm(event){
+	console.log(submit_ready);
+	// check if each line has a voice part recorded
+	if(voiceBlob.length == entries.length){				
+		if(!submit_ready){
+			upload_aud();
+			event.preventDefault();
+		}
+	}else{
+		alert("Please record every line before you submit the form, thank you");
+		event.preventDefault();
+	}
+}
+		
+function upload_aud(){
+	// sort and upload files in order just to feel good about it
+	voiceBlob.sort(function(a, b){
+		if(a.name < b.name){
+			return -1;
+		}else{
+			return 1;
+		}
+	});
+
+	for(i = 0; i < voiceBlob.length; i++){
+		var form_data = new FormData($("form")[0]);
+		// form_data.append(name, file, filename);
+		form_data.append("wav", voiceBlob[i].value, voiceBlob[i].filename);
+		$.ajax({
+			type: 'POST',
+			url: '/script/upload_script',
+			//url: '128.46.32.82:8012/script/upload_script',
+			data: form_data,
+			processData: false,
+			contentType: false,
+			async: false
+		}).done(function(data){
+			if(data == 'success'){
+				console.log("file"+i+" stored");
+			}else{
+				console.log("file"+i+" not stored");
+			}
+			if(i == (voiceBlob.length-1)){
+				submit_ready = true;
+				$("form")[0].submit();
+			}
+		});
+	}
+}
 </script>
 
 </body>

@@ -14,4 +14,5 @@ create table images (
 	title text not null,
 	page integer not null,
 	photo_path text not null
+	done integer default 0
 );
