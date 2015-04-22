@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Crowd Time Story - Script</title>
+	<script src="../static/js/jquery-1.11.0.min.js"></script>
+</head>
+<body>
+	<div id="script_ui">
+		<h2>Creating book script for "{{story}}"</h2>
+		<div id="pages"></div>
+		<br>
+		<input class="surprise" type="button" name="Create" value="Create Story" onclick="send_HITS()">
+		<p id="pull_status"></p>
+	</div>
+	<script>
+		var story = "{{story}}";
+		var pages = {{pages|tojson}};
+	
+		for(var i = 0; i < pages.length; i++){
+			console.log(pages[i].photo_path);
+			$("#pages").append("<img class='page' src="+pages[i].photo_path+" height='360' width='360'>");
+
+		}
+		
+		function send_HITS(){
+			$.ajax({
+				type: 'POST',
+				url: '/script/send_hit_type_1?story=' + story,
+				processData: false,
+				contentType: false
+			}).done(function(data){
+				console.log(data);
+				pull_results();
+			});
+		}
+		
+		function pull_results(){
+			$.ajax({
+				type: 'POST',
+				url: '/record/check_results',
+				processData: false,
+				contentType: false
+			}).done(function(data){
+				$("#pull_status")[0].innerHTML = data;
+				if(data == 'done'){
+					window.location='/record/result?&story=' + story;
+				}else{
+					setTimeout(pull_results(), 100000);
+				}
+			});
+		}
+	</script>
+</body>
+</html>

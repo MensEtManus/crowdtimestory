@@ -16,7 +16,7 @@
 <div style="width:600px; margin-left:auto; margin-right:auto; padding:12px; border: 1px solid black">This HIT is part of a class project at Purdue University by Albert Yang, Calvin Yau, and Karthik Kanuganti.&nbsp; Feel free to email us at <a href="mailto:yang716@purdue.edu">yang716@purdue.edu</a> with any questions or concerns.&nbsp; In case you run into any bugs in our system, we will make sure that you are paid.</div>
 <div><h1>Enter the text lines in the picture here..</h1><hr></div>
 {% block conent %}
-<strong>This is for book: "{{book_title}}"</strong>
+<strong>This is page {{page_num}} for book: "{{book_title}}"</strong>
 {% endblock %}
 <div id="char1">
 <img id="img" src="{{photo_path}}">
@@ -76,7 +76,7 @@ function submitForm(event){
 	}
 }
 		
-function upload_aud(){
+function upload_script(){
 	// sort and upload files in order just to feel good about it
 	voiceBlob.sort(function(a, b){
 		if(a.name < b.name){

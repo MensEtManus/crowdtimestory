@@ -16,7 +16,7 @@ hit_type = cl.create_hit_type(
 def index():
     book_title = "test"
     photo_path = "../static/images/1.jpg"
-    return render_template('hit1.html', title='script', book_title=book_title, photo_path=photo_path)
+    return render_template('script.html', title='script', book_title=book_title, photo_path=photo_path)
 
 @script.route('/script_result', methods=['GET', 'POST'])
 def script_hit():
@@ -48,22 +48,19 @@ def script_hit():
 def send_hit_type_1():
     global HITS_SENT
 
-    book_title = request.args.get('book_title')
+    story = request.args.get('story')
     
-    # the total number of characters in the story = the number of HITS to send
-    len = g.db.execute('SELECT COUNT(DISTINCT character) FROM story WHERE title="' + story +'"').fetchall()[0][0]
-    
-    # the total number of lines in the story = the number of AUD to receive
-    aud_len = g.db.execute('SELECT COUNT(*) FROM story WHERE title="' + story +'"').fetchall()[0][0]
-    HITS_SENT = HITS_SENT + aud_len
-    
-    # select all the pages in the story
-    pages = g.db.execute('SELECT DISTINCT page_num FROM story WHERE title="' + story +'"').fetchall()
-    
+    # select all the pages that are not scripted in the story
+    pages = g.db.execute('SELECT page FROM images WHERE title="' + story +'" AND done=0').fetchall()
+
+    # the number of HITS SENT == number of pages that are not scripted
+    num_of_pages = len(pages)
+    HITS_SENT = num_of_pages
+
     # for each character (parts[i][0]) i = 0; i < len; len++) send a hit out with the parameter story and charcter
-    for x in range(0, len):
+    for x in range(0, num_of_pages):
         hit = hit_type.create_hit(
-          url = "https://128.46.32.82:8011/script/hit_type_1?story=" + story + "&character=" + parts[x][0],
+          url = "https://128.46.32.82:8011/script/hit_type_1?story=" + story + "&page=" + pages[x][0],
           height = 800
         )
     
@@ -77,9 +74,6 @@ def hit_type_1():
     assignmentId = request.args.get('assignmentId')
     turkSubmitTo = request.args.get("turkSubmitTo")
     
-    cur = g.db.execute('SELECT page_num, photo_path FROM story WHERE title="' + story + '" AND character = "' + character + '"')
-    
-    entries = [dict(page=row[0], line=row[1], script=row[2]) for row in cur.fetchall()]
     
     return render_template('hit1.html', photo_path=photo_path, page_num=page_num, book_title=book_title, assignmentId=assignmentId, turkSubmitTo=turkSubmitTo)
 
