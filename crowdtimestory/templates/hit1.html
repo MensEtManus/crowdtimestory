@@ -18,7 +18,7 @@
 <strong>This is for book: "{{book_title}}"</strong>
 {% endblock %}
 <div id="char1">
-<img id="img" src="{{pic_path}}">
+<img id="img" src="{{photo_path}}">
 </div>
 <div id="script">
 	<!--
@@ -32,12 +32,13 @@
 	</br>
 	<!-- {{turkSubmitTo}}/mturk/externalSubmit -->
 
-	<form id="script_form" action="{{turkSubmitTo}}/mturk/externalSubmit" method="POST">
+	<form id="script_form" action="/script/script_result" method="POST">
 		<div id="lines">
 			Character name: <input type="text" name="character" style="width: 100px;">
 			Text: <input type="text" name="text"/></br>  
 		</div>
-		
+
+		</br>
 		<input id="submit" class="myButton" type="submit" value="Submit"/>
 	
 		<a href="#" id="line" class="myButton">Add Line</a>

@@ -15,8 +15,8 @@ hit_type = cl.create_hit_type(
 @script.route('/')
 def index():
     book_title = "test"
-    pic_path = "../static/images/1.jpg"
-    return render_template('hit1.html', title='script', book_title=book_title, pic_path=pic_path)
+    photo_path = "../static/images/1.jpg"
+    return render_template('hit1.html', title='script', book_title=book_title, photo_path=photo_path)
 
 @script.route('/script_result', methods=['GET', 'POST'])
 def script_hit():
@@ -24,27 +24,64 @@ def script_hit():
         f = request.form
         logging.warn(len(f))
         logging.warn("start loggin")
+        
+        characters = f.getlist("character")
+        texts = f.getlist("text")
+        for i in range(0, len(characters)):
+            string = "character " + str(i) + ": " + characters[i]
+            logging.warn(string)
+            string = "text " + str(i) + ": " + texts[i]
+            logging.warn(string)
+       
+        '''    
         for key in f.keys():
             for value in f.getlist(key):
                 string = key + ":" + value
                 logging.warn(string)
+        '''
         logging.warn("logging end")
 
     return redirect(url_for('home.index'))
 
+# generate hits for extracting scripts from a page of a book
+@script.route('/send_hit_type_1', methods=['POST'])
+def send_hit_type_1():
+    global HITS_SENT
+
+    book_title = request.args.get('book_title')
+    
+    # the total number of characters in the story = the number of HITS to send
+    len = g.db.execute('SELECT COUNT(DISTINCT character) FROM story WHERE title="' + story +'"').fetchall()[0][0]
+    
+    # the total number of lines in the story = the number of AUD to receive
+    aud_len = g.db.execute('SELECT COUNT(*) FROM story WHERE title="' + story +'"').fetchall()[0][0]
+    HITS_SENT = HITS_SENT + aud_len
+    
+    # select all the pages in the story
+    pages = g.db.execute('SELECT DISTINCT page_num FROM story WHERE title="' + story +'"').fetchall()
+    
+    # for each character (parts[i][0]) i = 0; i < len; len++) send a hit out with the parameter story and charcter
+    for x in range(0, len):
+        hit = hit_type.create_hit(
+          url = "https://128.46.32.82:8011/script/hit_type_1?story=" + story + "&character=" + parts[x][0],
+          height = 800
+        )
+    
+    return 'Workers are working hard to extract scripts from the pictures, please wait patiently'
+
 # generate the individual hit template for amt workers
 @script.route('/hit_type_1', methods=['GET', 'POST'])
 def hit_type_1():
-    story = request.args.get('story')
-    character = request.args.get('character')
+    book_title = request.args.get('book_title')
+    page_num = request.args.get('page_num')
     assignmentId = request.args.get('assignmentId')
     turkSubmitTo = request.args.get("turkSubmitTo")
     
-    cur = g.db.execute('SELECT page, line_num, script FROM story WHERE title="' + story + '" AND character = "' + character + '"')
+    cur = g.db.execute('SELECT page_num, photo_path FROM story WHERE title="' + story + '" AND character = "' + character + '"')
     
     entries = [dict(page=row[0], line=row[1], script=row[2]) for row in cur.fetchall()]
     
-    return render_template('hit1.html', pic_path=pic_path, book_title=book_title, assignmentId=assignmentId, turkSubmitTo=turkSubmitTo)
+    return render_template('hit1.html', photo_path=photo_path, page_num=page_num, book_title=book_title, assignmentId=assignmentId, turkSubmitTo=turkSubmitTo)
 
 # stores the scripts for stories from ajax calls
 @script.route('/upload_script', methods=['POST'])
