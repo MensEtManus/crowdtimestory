@@ -2,6 +2,7 @@ from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, Blueprint
 import logging
 import crowdlib as cl, crowdlib_settings, time
+import json
 
 script = Blueprint('script', __name__, url_prefix='/script')
 
@@ -16,7 +17,7 @@ hit_type = cl.create_hit_type(
 def index():
     book_title = "test"
     photo_path = "../static/images/1.jpg"
-    return render_template('script.html', title='script', book_title=book_title, photo_path=photo_path)
+    return render_template('hit1.html', title='script', book_title=book_title, photo_path=photo_path)
 
 @script.route('/script_result', methods=['GET', 'POST'])
 def script_hit():
@@ -78,20 +79,41 @@ def hit_type_1():
     return render_template('hit1.html', photo_path=photo_path, page_num=page_num, book_title=book_title, assignmentId=assignmentId, turkSubmitTo=turkSubmitTo)
 
 # stores the scripts for stories from ajax calls
-@script.route('/upload_script', methods=['POST'])
-def upload_aud():
-    global AUD_SUBMITTED
+@script.route('/upload_script', methods=['GET','POST'])
+def upload_script():
+    global HITS_SUBMITTED
+    page_num = request.args.get('page_num')
+    story = request.args.get('book_title')
     # TODO save scripts from the HIT to database
-    
+    if request.method == "POST": 
+
+        f = request.form
+
+        #page_num = f.get('page_num')
+        #story = f.get('book_title')
+
+        logging.warn(len(f))
+        logging.warn("start loggin")
+        logging.warn(page_num)
+        logging.warn(story)
+
+        characters = f.getlist("character")
+        texts = f.getlist("text")
+        for i in range(0, len(characters)):
+            string = "character " + str(i) + ": " + characters[i]
+            logging.warn(string)
+            string = "text " + str(i) + ": " + texts[i]
+            logging.warn(string)
+    HITS_SUBMITTED = HITS_SUBMITTED + 1
     return 'success'
 
 # check if the HITS are done
 @script.route('/check_results', methods=['POST'])
 def check_results():
-    if AUD_SUBMITTED == HITS_SENT:
+    if HITS_SUBMITTED == HITS_SENT:
         return 'done'
     else:   
-        return 'waiting for ' + str(HITS_SENT - PIC_SUBMITTED) + ' more hits to be completed'
+        return 'waiting for ' + str(HITS_SENT - HITS_SUBMITTED) + ' more hits to be completed'
 
 
 @script.route('/cancelHIT', methods=['GET'])

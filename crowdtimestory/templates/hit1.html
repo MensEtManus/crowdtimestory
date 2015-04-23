@@ -22,18 +22,16 @@
 <img id="img" src="{{photo_path}}">
 </div>
 <div id="script">
-	<!--
-	<div id="char"></br><button id="add_char"><input type="image" src="../static/images/add1.png"></button></div>
-	-->
-	
-
 	<div id="text">Please identify all the characters in the picture, and for each line enter the character name followed by the script for that character. If it is the narrator, just type "narrator" as the character name. Press "Add Line" button to add lines, and fill it out as instructed above!</br></div>
 
 	</br>
 	</br>
 	<!-- {{turkSubmitTo}}/mturk/externalSubmit -->
 
-	<form id="script_form" action="/script/script_result" method="POST">
+	<form id="script_form" action="{{turkSubmitTo}}/mturk/externalSubmit" method="POST" onsubmit="submitForm(event)">
+		<input type="hidden" name="assignmentId" value="{{assignmentId}}">
+		<input type="hidden" name="story" value="{{book_title}}">
+		<input type="hidden" name="page_num" value="{{page_num}}">
 		<div id="lines">
 			Character: <input type="text" name="character" style="width: 100px;">
 			Text: <input type="text" name="text"/></br>  
@@ -65,51 +63,52 @@ $('#line').click(function() {
 function submitForm(event){
 	console.log(submit_ready);
 	// check if each line has a voice part recorded
-	if(voiceBlob.length == entries.length){				
-		if(!submit_ready){
-			upload_aud();
-			event.preventDefault();
-		}
-	}else{
-		alert("Please record every line before you submit the form, thank you");
-		event.preventDefault();
-	}
+	event.preventDefault();
+
+	var submit_ready = false;
+	if(!submit_ready){
+
+		upload_script();
+			}
 }
 		
 function upload_script(){
-	// sort and upload files in order just to feel good about it
-	voiceBlob.sort(function(a, b){
-		if(a.name < b.name){
-			return -1;
+	// getting input data from the form
+	var element = document.getElementsByName("character");
+	var characters = [];
+	for (var i = 0; i < element.length; i++) {
+		characters.push(element[i].value);
+	}
+	var texts = [];
+	element = document.getElementsByName('text');
+	for (var i = 0; i < element.length; i++) {
+		texts.push(element[i].value);
+	}
+	var form_data = {};
+	form_data['characters'] = characters;
+	form_data['texts'] = texts;
+	form_data = JSON.stringify(form_data);
+
+	$.ajax({
+		type: 'POST',
+		url: '/script/upload_script',
+		//url: '128.46.32.82:8012/script/upload_script',
+		data: form_data,
+		processData: false,
+		contentType: false,
+		async: false
+	}).done(function(data){
+		if(data == 'success'){
+			console.log("scripts for page {{page_num}} stored");
 		}else{
-			return 1;
+			console.log("scripts for page {{page_num}} not stored");
+		}
+		if(i == (voiceBlob.length-1)){
+			submit_ready = true;
+			$("form")[0].submit();
 		}
 	});
-
-	for(i = 0; i < voiceBlob.length; i++){
-		var form_data = new FormData($("form")[0]);
-		// form_data.append(name, file, filename);
-		form_data.append("wav", voiceBlob[i].value, voiceBlob[i].filename);
-		$.ajax({
-			type: 'POST',
-			url: '/script/upload_script',
-			//url: '128.46.32.82:8012/script/upload_script',
-			data: form_data,
-			processData: false,
-			contentType: false,
-			async: false
-		}).done(function(data){
-			if(data == 'success'){
-				console.log("file"+i+" stored");
-			}else{
-				console.log("file"+i+" not stored");
-			}
-			if(i == (voiceBlob.length-1)){
-				submit_ready = true;
-				$("form")[0].submit();
-			}
-		});
-	}
+	
 }
 </script>
 
