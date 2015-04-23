@@ -17,7 +17,8 @@ hit_type = cl.create_hit_type(
 def index():
     book_title = "test"
     photo_path = "../static/images/1.jpg"
-    return render_template('hit1.html', title='script', book_title=book_title, photo_path=photo_path)
+    page_num = 1
+    return render_template('hit1.html', title='script', book_title=book_title, photo_path=photo_path, page_num=page_num)
 
 @script.route('/script_result', methods=['GET', 'POST'])
 def script_hit():
@@ -57,7 +58,8 @@ def send_hit_type_1():
     # the number of HITS SENT == number of pages that are not scripted
     num_of_pages = len(pages)
     HITS_SENT = num_of_pages
-
+    logging.warn("page number????")
+    logging.warn(pages[0])
     # for each character (parts[i][0]) i = 0; i < len; len++) send a hit out with the parameter story and charcter
     for x in range(0, num_of_pages):
         hit = hit_type.create_hit(
@@ -71,7 +73,7 @@ def send_hit_type_1():
 @script.route('/hit_type_1', methods=['GET', 'POST'])
 def hit_type_1():
     book_title = request.args.get('book_title')
-    page_num = request.args.get('page_num')
+    page_num = request.args.get('page')
     assignmentId = request.args.get('assignmentId')
     turkSubmitTo = request.args.get("turkSubmitTo")
     
@@ -82,23 +84,22 @@ def hit_type_1():
 @script.route('/upload_script', methods=['GET','POST'])
 def upload_script():
     global HITS_SUBMITTED
-    page_num = request.args.get('page_num')
+    page_num = request.args.get('page')
     story = request.args.get('book_title')
     # TODO save scripts from the HIT to database
     if request.method == "POST": 
 
-        f = request.form
+        data = json.loads(request.get_json())
 
         #page_num = f.get('page_num')
         #story = f.get('book_title')
+        characters = data['character']
+        texts = data['text']
 
-        logging.warn(len(f))
         logging.warn("start loggin")
         logging.warn(page_num)
         logging.warn(story)
 
-        characters = f.getlist("character")
-        texts = f.getlist("text")
         for i in range(0, len(characters)):
             string = "character " + str(i) + ": " + characters[i]
             logging.warn(string)

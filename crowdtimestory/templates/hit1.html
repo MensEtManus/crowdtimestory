@@ -63,13 +63,14 @@ $('#line').click(function() {
 function submitForm(event){
 	console.log(submit_ready);
 	// check if each line has a voice part recorded
-	event.preventDefault();
+	
 
 	var submit_ready = false;
 	if(!submit_ready){
 
 		upload_script();
-			}
+		event.preventDefault();
+	}
 }
 		
 function upload_script(){
@@ -85,8 +86,13 @@ function upload_script(){
 		texts.push(element[i].value);
 	}
 	var form_data = {};
+	form_data['story'] = {{book_title}};
+	form_data['page'] = {{page_num}};
 	form_data['characters'] = characters;
 	form_data['texts'] = texts;
+	console.log(form_data['characters']);
+	console.log(form_data['story']);
+	console.log(form_data['page']);
 	form_data = JSON.stringify(form_data);
 
 	$.ajax({

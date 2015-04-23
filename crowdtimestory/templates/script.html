@@ -44,7 +44,7 @@
 			}).done(function(data){
 				$("#pull_status")[0].innerHTML = data;
 				if(data == 'done'){
-					window.location='/record/result?&story=' + story;
+					window.location='/record&story=' + story;
 				}else{
 					setTimeout(pull_results(), 100000);
 				}
