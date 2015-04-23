@@ -35,17 +35,16 @@ def upload_image():
         book_title = secure_filename(request.form['book_title'])
         try:
             con = sqlite3.connect('crowdtimestory/db/story.db')
-            cursor = con.cursor()
+            cur = con.cursor()
         except sqlite3.Error, e:
             if con:
                 con.rollback()
             log.error("Error %s:" % e.args[0])
-            con = sqlite3.connect('crowdtimestory/db/story.db')
-            cursor = con.cursor()
-        except sqlite3.Error, e:
-            if con:
-                con.rollback()
-                print "Error %s:" % e.args[0]
+        '''    
+        sql = "DELETE FROM images WHERE title='%s'" % (book_title)
+        cur.execute(sql)
+        con.commit()
+        '''
         for photo in files:
             if photo and allowed_file(photo.filename):
                 filename = secure_filename(photo.filename)
@@ -62,13 +61,14 @@ def upload_image():
                     if not os.path.isdir(dir):
                         raise
                 photo.save(os.path.join(dir, filename))
-                cur = con.cursor()
+
                 pic_path = pic_path.replace("crowdtimestory", "..")
                 data = [book_title, page, pic_path] 
+
                 sql = "INSERT INTO images(title, page, photo_path) VALUES (?,?,?)" 
                 cur.execute(sql, data)
                 con.commit()  
-        sql = "SELECT page, photo_path FROM images WHERE title = '%s' AND done = 0" % (book_title)
+        sql = "SELECT DISTINCT page, photo_path FROM images WHERE title = '%s' AND done = 0" % (book_title)
         cur = cur.execute(sql)
         pages = [dict(page=row[0], photo_path=row[1]) for row in cur.fetchall()]
         con.close()

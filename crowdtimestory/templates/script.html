@@ -38,13 +38,13 @@
 		function pull_results(){
 			$.ajax({
 				type: 'POST',
-				url: '/record/check_results',
+				url: '/script/check_results',
 				processData: false,
 				contentType: false
 			}).done(function(data){
 				$("#pull_status")[0].innerHTML = data;
 				if(data == 'done'){
-					window.location='/record&story=' + story;
+					window.location='/record?story=' + story;
 				}else{
 					setTimeout(pull_results(), 100000);
 				}

@@ -45,7 +45,7 @@ def send_hit_type_2():
 	# for each character (parts[i][0]) i = 0; i < len; len++) send a hit out with the parameter story and charcter
 	for x in range(0, len):
 		hit = hit_type.create_hit(
-		  url = "https://128.46.32.82:8012/record/hit_type_2?story=" + story + "&character=" + parts[x][0],
+		  url = "https://128.46.32.82:8011/record/hit_type_2?story=" + story + "&character=" + parts[x][0],
 		  height = 800
 		)
 	
@@ -107,7 +107,7 @@ def allowed_file(filename):
 @record.route('/sendHIT', methods=['GET'])
 def sendHIT():
 	hit = hit_type.create_hit(
-	  url = "https://128.46.32.82:8012/record/hit_type_2?story=Where%20the%20wild%20things%20are&character=mother",
+	  url = "https://128.46.32.82:8011/record/hit_type_2?story=Where%20the%20wild%20things%20are&character=mother",
 	  height = 300
 	)
 	return 'HIT has been sent'
