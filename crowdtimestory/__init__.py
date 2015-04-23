@@ -17,8 +17,7 @@ SECRET_KEY = 'development key'
 USERNAME = 'admin'
 PASSWORD = 'default'
 
-PORT = 8012
-URL_PREFIX = '/%02d'%(PORT % 100)
+PORT = 8011
 
 # create the application
 app = Flask(__name__)
@@ -36,10 +35,13 @@ app.register_blueprint(home)
 from crowdtimestory.upload.views import upload
 app.register_blueprint(upload)
 
+# setup script blueprint
+from crowdtimestory.script.views import script 
+app.register_blueprint(script)
+
 # setup record blueprint
 from crowdtimestory.record.views import record
 app.register_blueprint(record)
-
 
 @app.route('/')
 def index():

@@ -1,11 +1,11 @@
 drop table if exists stories;
 create table stories (
-  id integer primary key autoincrement,
-  title text not null,
-  page integer not null,
-  line_num integer not null,
-  character text not null,
-  script text not null
+	id integer primary key autoincrement,
+	title text not null,
+	page integer not null,
+	line_num integer not null,
+	character text not null,
+	script text not null
 );
 
 drop table if exists images;
@@ -13,5 +13,6 @@ create table images (
 	id integer primary key autoincrement,
 	title text not null,
 	page integer not null,
-	picture blob
+	photo_path text not null
+	done integer default 0
 );
