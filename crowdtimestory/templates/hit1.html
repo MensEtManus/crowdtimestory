@@ -41,6 +41,7 @@
 		<input id="submit_btn" class="myButton" type="submit" value="Submit"/>
 	
 		<a href="#" id="line" class="myButton">Add Line</a>
+		<a href="#" id="delete_line" class="myButton">Delete Line</a>
 
 	</form>
 
@@ -50,79 +51,96 @@
 </div>
 
 <script type="text/javascript">
-var line_num = 1;
-var submit_ready = false;
-console.log("we have " + line_num + " lines!!");
-$('#line').click(function() {
-    $('<div id="lines"> Character: <input type="text" name="character" style="width: 100px;"> Text: <input type="text" name="text"/></br> </div>').appendTo($('#lines'));
-    line_num += 1;
-    console.log("we have " + line_num + " lines!!");
-});
-
-if("{{assignmentId}}" == "ASSIGNMENT_ID_NOT_AVAILABLE"){
-	$("button").prop('disabled', true);
-	$("input").prop('disabled', true);
-
-}
-
-function submitForm(event){
-	// check if each line has a voice part recorded
+$( document ).ready(function(){
 	
-	//console.log(submit_ready);
-	if(!submit_ready){
-		
+	var line_num = 1;
+	var submit_ready = false;
+	console.log("we have " + line_num + " lines!!");
+	$('#line').click(function() {
+		line_num += 1;
+	    $('<div id="lines'+line_num+'"> Character: <input type="text" name="character" style="width: 100px;"> Text: <input type="text" name="text"/></br> </div>').appendTo($("#lines"));
+	   
+	    console.log("we have " + line_num + " lines!!");
+	});
 
-		upload_script();
-		event.preventDefault();
-	}
-}
-		
-function upload_script(){
-	// getting input data from the form
-	var element = document.getElementsByName("character");
-	var characters = [];
-	
-	for (var i = 0; i < element.length; i++) {
-		characters.push(element[i].value);
-	}
-	var texts = [];
-	element = document.getElementsByName('text');
-	for (var i = 0; i < element.length; i++) {
-		texts.push(element[i].value);
-	}
-	var form_data = {};
-	form_data['story'] = "{{book_title}}";
-	form_data['page'] = {{page_num}};
-	form_data['characters'] = characters;
-	form_data['texts'] = texts;
+	$('#delete_line').click(function() {
+		$('#lines' + line_num).remove();
+		line_num -= 1;
+		console.log("we have " + line_num + " lines!!");
+	});
 
 	/*
-	console.log(form_data['characters']);
-	console.log(form_data['story']);
-	console.log(form_data['page']);
+	if("{{assignmentId}}" == "ASSIGNMENT_ID_NOT_AVAILABLE"){
+		$("button").prop('disabled', true);
+		$("input").prop('disabled', true);
+
+	}
 	*/
 
-	form_data = JSON.stringify(form_data);
+	function submitForm(event){
+		// check if each line has a voice part recorded
+		
+		//console.log(submit_ready);
+		if(!submit_ready){
+			
 
-	$.ajax({
-		type: 'POST',
-		url: '/script/upload_script',
-		//url: '128.46.32.82:8012/script/upload_script',
-		data: form_data,
-		processData: false,
-		contentType: "application/json",
-		async: false
-	}).done(function(data){
-		if(data == 'success'){
-			console.log("scripts for page {{page_num}} stored");
-			submit_ready = true;
-			$("#script_form").submit();
-		}else{
-			console.log("scripts for page {{page_num}} not stored");
+			upload_script();
+			event.preventDefault();
 		}
-	});
-	
-}
+		else {
+			console.log("ok")
+		}
+		
+	}
+			
+	function upload_script(){
+		// getting input data from the form
+		var element = document.getElementsByName("character");
+		var characters = [];
+		
+		for (var i = 0; i < element.length; i++) {
+			characters.push(element[i].value);
+		}
+		var texts = [];
+		element = document.getElementsByName('text');
+		for (var i = 0; i < element.length; i++) {
+			texts.push(element[i].value);
+		}
+		var form_data = {};
+		form_data['story'] = "{{book_title}}";
+		form_data['page'] = {{page_num}};
+		form_data['characters'] = characters;
+		form_data['texts'] = texts;
+
+		/*
+		console.log(form_data['characters']);
+		console.log(form_data['story']);
+		console.log(form_data['page']);
+		*/
+
+		form_data = JSON.stringify(form_data);
+
+		$.ajax({
+			type: 'POST',
+			url: '/script/upload_script',
+			//url: '128.46.32.82:8012/script/upload_script',
+			data: form_data,
+			processData: false,
+			contentType: "application/json",
+			async: false
+		}).done(function(data){
+			if(data == 'success'){
+				console.log("scripts for page {{page_num}} stored");
+				submit_ready = true;
+				$("#script_form").submit();
+			}else{
+				console.log("scripts for page {{page_num}} not stored");
+			}
+		});
+		
+	}
+
+});
 </script>
 
 </body>
