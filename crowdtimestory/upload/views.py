@@ -32,7 +32,7 @@ def get_page_num(photo):
 def upload_image():
     if request.method == 'POST':
         files = request.files.getlist('image_files')
-        book_title = secure_filename(request.form['book_title'])
+        book_title = secure_filename(request.form['book_title']).lower()
         try:
             con = sqlite3.connect('crowdtimestory/db/story.db')
             cur = con.cursor()

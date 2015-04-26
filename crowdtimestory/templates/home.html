@@ -95,22 +95,20 @@
       <h1>Books</h1>
       <hr/>
       <h3 class="heading">Select existing books from our shelf</h3>
-      <div class="row"><br/>
-        <div class="col-md-4"> <a href="../record/result?story=Where the wild things are"><img onmouseover="bigImg(this)" onmouseout="normalImg(this)" border="0" class="center-block" src="../static/images/Where_The_Wild_Things_Are_(book)_cover.jpg" alt="wHERE THE WILD THINGS ARE" width="250" height="300" /></a></div>
+      <div class="row" id="book_list" style="text-align: center;"><br/>
+		
+		<!--
+		<div class="col-md-4"> <a href="../record/result?story=where_the_wild_things_are"><img onmouseover="bigImg(this)" onmouseout="normalImg(this)" border="0" class="center-block" src="../static/images/Where_The_Wild_Things_Are_(book)_cover.jpg" alt="wHERE THE WILD THINGS ARE" width="250" height="300"/></a>where_the_wild_things_are</div>
 
         <div class="col-md-4">
           <img onmouseover="bigImg(this)" onmouseout="normalImg(this)" border="0" class="center-block" src="../static/images/book.png" alt="Coming soon.."  width="250" height="300" /></div>
+		  
         <div class="col-md-4">
           <img onmouseover="bigImg(this)" onmouseout="normalImg(this)" border="0" class="center-block" src="../static/images/book.png" alt="Coming soon.."  width="250" height="300" /></div>
-        <!--<div class="overlay"></div>
-          <div id="button"></div> -->
-      <!-- </div>
-      <div class="row">
-        <div class="col-md-4"><img onmouseover="bigImg(this)" onmouseout="normalImg(this)" border="0" class="center-block" src="../static/images/book.png" alt="bedtime stories" width="250" height="300" /></div>
-        <div class="col-md-4"><img onmouseover="bigImg(this)" onmouseout="normalImg(this)" border="0" class="center-block" src="../static/images/book.png" alt="Matilda" width="250" height="300" /></div>
-        <div class="col-md-4"><img onmouseover="bigImg(this)" onmouseout="normalImg(this)" border="0" class="center-block" src="../static/images/book.png" alt="brown bear" width="250" height="300" /></div>
-         -->
+		-->
         
+		<!--<div class="overlay"></div>
+          <div id="button"></div> -->        
       </div>
     </div>
     
@@ -196,6 +194,17 @@ Step7: Upload the audio files to us and  -->
         x.style.height = "300px";
         x.style.width = "250px";
     }
+	
+	var stories = {{stories|tojson}};
+	for (var i = 0; i < stories.length; i++){
+		var story_name = stories[i].name;
+		$("#book_list").append('<div class="col-md-4"> <a href="../record/result?story='+story_name+'"><img onmouseover="bigImg(this)" onmouseout="normalImg(this)" border="0" class="center-block" src="../static/images/'+story_name+'/page1.jpg" alt="'+story_name+'" width="250" height="300"/></a>'+story_name.replace("_", " ")+'</div>');
+	}
+	if (stories.length < 3){
+		for(var i = 0; i < 3 - stories.length; i++){
+			$("#book_list").append('<div class="col-md-4"><img onmouseover="bigImg(this)" onmouseout="normalImg(this)" border="0" class="center-block" src="../static/images/book.png" width="250" height="300"/></div>');
+		}
+	}
 </script>
 
 {% endblock %}

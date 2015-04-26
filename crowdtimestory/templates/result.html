@@ -46,7 +46,8 @@
 		}
 		
 		function load_page(page){
-			$("#pic")[0].src = "../static/images/"+image_path+"/page"+page+".jpg"
+			$("#pic")[0].src = "../static/images/"+image_path+"/page"+page+".jpg";
+			$("#pic")[0].style.height="400px";
 			
 			$("#aud").empty();
 			for(var i = 1; i <= $.grep(entries, function(e){return e.page == page}).length; i++){

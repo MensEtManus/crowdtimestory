@@ -9,7 +9,7 @@ app.run(host='127.0.0.1', port=PORT)
 '''
 
 context = ('key.crt', 'key.key')
-app.debug = True
+app.debug = False
 app.run(host='128.46.32.82', port=8012, ssl_context=context)
 
 
