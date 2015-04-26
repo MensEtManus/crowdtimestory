@@ -11,10 +11,10 @@
 	<script src="../static/js/recorder.js"></script>
 </head>
 <body>
+	<div style="width:600px; margin-left:auto; margin-right:auto; padding:12px; border: 1px solid black">This HIT is part of a class project at Purdue University by Albert Yang, Calvin Yau, and Karthik Kanuganti.&nbsp; Feel free to email us at <a href="mailto:yang716@purdue.edu">yang716@purdue.edu</a> with any questions or concerns.&nbsp; In case you run into any bugs in our system, we will make sure that you are paid.</div>
+	
 	<h1>Instructions</h1>
 	<p>Please make sure your device is connected to a mic before you proceed</p>
-	<p>The audio parts recorded will be used in a class project with care.</p>
-
 	<form id="voice_acting" action="{{turkSubmitTo}}/mturk/externalSubmit" method="POST" onsubmit="submitForm(event)">
 		<input type="hidden" name="assignmentId" value="{{assignmentId}}">
 		<input type="hidden" name="story" value="story_name">

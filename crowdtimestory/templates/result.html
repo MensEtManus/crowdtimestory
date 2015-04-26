@@ -34,11 +34,13 @@
 		}
 		
 		function prev_page(){
+			console.log("prev_page, page "+page+" called");
 			page = Math.max(1, page - 1);
 			load_page(page)
 		}
 		
 		function next_page(){
+			console.log("next_page, page "+page+" called");
 			page = Math.min(page_max, page + 1);
 			load_page(page);
 		}

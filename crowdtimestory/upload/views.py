@@ -68,7 +68,7 @@ def upload_image():
                 sql = "INSERT INTO images(title, page, photo_path) VALUES (?,?,?)" 
                 cur.execute(sql, data)
                 con.commit()  
-        sql = "SELECT page, photo_path FROM images WHERE title = '%s' AND done = 0" % (book_title)
+        sql = "SELECT DISTINCT page, photo_path FROM images WHERE title = '%s' AND done = 0" % (book_title)
         cur = cur.execute(sql)
         pages = [dict(page=row[0], photo_path=row[1]) for row in cur.fetchall()]
         con.close()

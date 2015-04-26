@@ -61,7 +61,7 @@ def send_hit_type_1():
     # for each character (parts[i][0]) i = 0; i < len; len++) send a hit out with the parameter story and charcter
     for x in range(0, num_of_pages):
         hit = hit_type.create_hit(
-          url = "https://128.46.32.82:8011/script/hit_type_1?story=" + story + "&page=" + pages[x][0],
+          url = "https://128.46.32.82:8012/script/hit_type_1?story=" + story + "&page=" + pages[x][0],
           height = 800
         )
     
