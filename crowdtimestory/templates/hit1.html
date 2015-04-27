@@ -41,14 +41,17 @@
 		<input type="hidden" name="story" value="{{book_title}}">
 		<input type="hidden" name="page_num" value="{{page_num}}">
 		<div id="lines">
-			Character: <input type="text" name="character" style="width: 100px;">
-			Text: <input type="text" name="text"/></br>  
+			<div id="line1">
+				Character: <input type="text" name="character" style="width: 100px;">
+				Text: <input type="text" name="text"/></br>  
+			</div>
 		</div>
 
 		</br>
 		<input id="submit_btn" class="myButton" type="submit" value="Submit"/>
 	
 		<a href="#" id="line" class="myButton">Add Line</a>
+		<a href="#" id="delete_line" class="myButton">Delete Line</a>
 
 	</form>
 
@@ -62,9 +65,15 @@ var line_num = 1;
 var submit_ready = false;
 console.log("we have " + line_num + " lines!!");
 $('#line').click(function() {
-    $('<div id="lines"> Character: <input type="text" name="character" style="width: 100px;"> Text: <input type="text" name="text"/></br> </div>').appendTo($('#lines'));
-    line_num += 1;
+	line_num += 1;
+    $('<div id="line'+line_num+'"> Character: <input type="text" name="character" style="width: 100px;"> Text: <input type="text" name="text"/></br> </div>').appendTo($('#lines'));
     console.log("we have " + line_num + " lines!!");
+});
+
+$('#delete_line').click(function() {
+    $('#line' + line_num).remove();
+	line_num -= 1;
+	console.log("we have " + line_num + " lines!!");
 });
 
 if("{{assignmentId}}" == "ASSIGNMENT_ID_NOT_AVAILABLE"){
