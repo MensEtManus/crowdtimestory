@@ -61,12 +61,12 @@ def send_hit_type_1():
 
     # the number of HITS SENT == number of pages that are not scripted
     num_of_pages = len(pages)
-    HITS_SENT = num_of_pages
+    HITS_SENT = HITS_SENT + num_of_pages
 
     for page in pages:
         page_num = str(page[0])
         hit = hit_type.create_hit(
-          url = "https://128.46.32.82:8011/script/hit_type_1?story=" + story + "&page=" + page_num + "&photo_path=" + page[1],
+          url = "https://128.46.32.82:8012/script/hit_type_1?story=" + story + "&page=" + page_num + "&photo_path=" + page[1],
           height = 800
         )
     

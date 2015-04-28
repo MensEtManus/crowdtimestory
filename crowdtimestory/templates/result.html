@@ -34,17 +34,20 @@
 		}
 		
 		function prev_page(){
+			console.log("prev_page, page "+page+" called");
 			page = Math.max(1, page - 1);
 			load_page(page)
 		}
 		
 		function next_page(){
+			console.log("next_page, page "+page+" called");
 			page = Math.min(page_max, page + 1);
 			load_page(page);
 		}
 		
 		function load_page(page){
-			$("#pic")[0].src = "../static/images/"+image_path+"/page"+page+".jpg"
+			$("#pic")[0].src = "../static/images/"+image_path+"/page"+page+".jpg";
+			$("#pic")[0].style.height="400px";
 			
 			$("#aud").empty();
 			for(var i = 1; i <= $.grep(entries, function(e){return e.page == page}).length; i++){

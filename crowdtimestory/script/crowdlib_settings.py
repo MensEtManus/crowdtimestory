@@ -6,8 +6,8 @@ from crowdlib import settings as cls #, os
 cls.service_type = "sandbox"  # REQUIRED; must be either "sandbox" or "production"
 
 # AWS ACCOUNT INFO
-cls.aws_account_id  = "AKIAIPTEBCQNKHJOX27Q"                    # REQUIRED; "Access Key ID" from AWS
-cls.aws_account_key = "HAmc5ESEiNFsR+IF3JAOEduz2p3Wk+si3w4hpuU9" # REQUIRED; "Secret Access Key" from AWS
+cls.aws_account_id  = "" # REQUIRED; "Access Key ID" from AWS
+cls.aws_account_key = "" # REQUIRED; "Secret Access Key" from AWS
 
 # DIRECTORY FOR CROWDLIB DATABASE
 #cls.db_dir = os.path.abspath(os.path.expanduser("~/.crowdlib_data/"))  # Optional; this is the default

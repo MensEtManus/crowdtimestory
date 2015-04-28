@@ -17,7 +17,7 @@ SECRET_KEY = 'development key'
 USERNAME = 'admin'
 PASSWORD = 'default'
 
-PORT = 8011
+PORT = 8012
 
 # create the application
 app = Flask(__name__)

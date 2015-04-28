@@ -22,7 +22,15 @@
 <img id="img" src="{{photo_path}}">
 </div>
 <div id="script">
-	<div id="text">Please identify all the characters in the picture, and for each line enter the character name followed by the script for that character. If it is the narrator, just type "narrator" as the character name. Press "Add Line" button to add lines, and fill it out as instructed above!</br></div>
+	<div id="text">
+		Please identify all the characters in the picture, and for each line enter the character name followed by the script for that character. If it is the narrator, just type "narrator" as the character name. Press "Add Line" button to add lines, and fill it out as instructed above!<br><br>
+		For example:<br>
+		<i>Just as Karthik was about to hit the submit button, "STOP!" yelled Calvin. </i><br>
+		would be entered as the following:<br>
+		<b>narrator</b>: Just as Karthik was about to hit the submit button,<br>
+		<b>Calvin</b>: STOP!<br>
+		<b>narrator</b>: yelled Calvin.<br>
+	</div>
 
 	</br>
 	</br>
@@ -33,8 +41,10 @@
 		<input type="hidden" name="story" value="{{book_title}}">
 		<input type="hidden" name="page_num" value="{{page_num}}">
 		<div id="lines">
-			Character: <input type="text" name="character" style="width: 100px;">
-			Text: <input type="text" name="text"/></br>  
+			<div id="line1">
+				Character: <input type="text" name="character" style="width: 100px;">
+				Text: <input type="text" name="text"/></br>  
+			</div>
 		</div>
 
 		</br>
@@ -51,6 +61,7 @@
 </div>
 
 <script type="text/javascript">
+<<<<<<< HEAD
 $( document ).ready(function(){
 	
 	var line_num = 1;
@@ -68,6 +79,26 @@ $( document ).ready(function(){
 		line_num -= 1;
 		console.log("we have " + line_num + " lines!!");
 	});
+=======
+var line_num = 1;
+var submit_ready = false;
+console.log("we have " + line_num + " lines!!");
+$('#line').click(function() {
+	line_num += 1;
+    $('<div id="line'+line_num+'"> Character: <input type="text" name="character" style="width: 100px;"> Text: <input type="text" name="text"/></br> </div>').appendTo($('#lines'));
+    console.log("we have " + line_num + " lines!!");
+});
+
+$('#delete_line').click(function() {
+    $('#line' + line_num).remove();
+	line_num -= 1;
+	console.log("we have " + line_num + " lines!!");
+});
+
+if("{{assignmentId}}" == "ASSIGNMENT_ID_NOT_AVAILABLE"){
+	$("button").prop('disabled', true);
+	$("input").prop('disabled', true);
+>>>>>>> yauc-master
 
 	/*
 	if("{{assignmentId}}" == "ASSIGNMENT_ID_NOT_AVAILABLE"){
