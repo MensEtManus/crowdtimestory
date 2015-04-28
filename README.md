@@ -11,7 +11,22 @@ Option 2. Create a customized story for yourself and it will be added to our she
 
 ### SCREEN SHOTS 
 <p align="center">
-  <img src="crowdtimestory/static/images/screenshots/prototype_stage2_10.jpg" alt="Screenshot"/>
+  <img src="crowdtimestory/static/images/screenshots/complete/01.jpg" alt="Screenshot"/>
 </p>
 
+<p align="center">
+  <img src="crowdtimestory/static/images/screenshots/complete/02.jpg" alt="Screenshot"/>
+</p>
+
+<p align="center">
+  <img src="crowdtimestory/static/images/screenshots/complete/05.jpg" alt="Screenshot"/>
+</p>
+
+<p align="center">
+Using Amaazon Mechanical Turk as crowd source to extract scripts from user
+uploaded pictures. 
+
+<p align="center">
+  <img src="crowdtimestory/static/images/screenshots/complete/05.jpg" alt="Screenshot"/>
+</p>
 Enjoy your crowd time story!
